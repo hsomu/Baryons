@@ -1,4 +1,4 @@
-package example;
+package com.pega.hcms;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

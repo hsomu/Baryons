@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package example;
+package com.pega.hcms;
 
 import io.micronaut.runtime.Micronaut;
 
@@ -21,10 +21,6 @@ import io.micronaut.runtime.Micronaut;
  * @author Graeme Rocher
  * @since 1.0
  */
-import io.reactivex.Maybe;
-import io.reactivex.Single;
-import io.micronaut.http.annotation.*;
-import java.util.List;
 import io.swagger.v3.oas.annotations.*;
 import io.swagger.v3.oas.annotations.info.*;
 import io.swagger.v3.oas.annotations.tags.*;
