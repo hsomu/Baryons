@@ -15,7 +15,9 @@
  */
 package com.pega.hcms;
 
+import com.pega.hcms.model.HCProvider;
 import com.pega.hcms.model.Vaccines;
+import com.pega.hcms.repository.HCProviderRepository;
 import com.pega.hcms.repository.VaccinesRepository;
 import io.micronaut.runtime.Micronaut;
 
@@ -34,6 +36,8 @@ import io.swagger.v3.oas.annotations.security.*;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -75,6 +79,9 @@ public class Application {
     @Inject
     private VaccinesRepository vaccinesRepository;
 
+    @Inject
+    private HCProviderRepository hcProviderRepository;
+
     public static void main(String[] args) {
         Micronaut.run(Application.class);
     }
@@ -83,13 +90,30 @@ public class Application {
     @EventListener
     @Async
     public void onStartup(ServerStartupEvent event) {
-        vaccinesRepository.deleteAll();
-        var vaccinesList = Map.of("BCG", "Tuberculosis", "Hep B", "Hepatitis B",
-                        "Polio", "Poliovirus", "Covishield","Covid-19", "Covaxin","Covid-19" )
-                .entrySet()
-                .stream()
-                .map( e -> new Vaccines(e.getKey(), e.getValue()))
-                        .collect(Collectors.toList());
-        vaccinesRepository.saveAll(vaccinesList);
+        // setup vaccine data
+        if(vaccinesRepository.count() < 1){
+            vaccinesRepository.deleteAll();
+            var vaccinesList = Map.of("BCG", "Tuberculosis", "Hep B", "Hepatitis B",
+                            "Polio", "Poliovirus", "Covishield","Covid-19", "Covaxin","Covid-19" )
+                    .entrySet()
+                    .stream()
+                    .map( e -> new Vaccines(e.getKey(), e.getValue()))
+                    .collect(Collectors.toList());
+            vaccinesRepository.saveAll(vaccinesList);
+        }
+
+        //setup hc providers
+        if(hcProviderRepository.count() < 1){
+            hcProviderRepository.deleteAll();
+            var hcProviderData = Arrays.stream(new String[][]{
+                            {"Apollo Banjara", "Banjara Hills", "Hyderabad"},
+                            {"Apollo Secunderabad", "SP Road, Secunderabad", "Secunderabad"},
+                            {"Apollo Somajiguda", "Somajiguda", "Hyderabad"},
+                            {"Sunshine Secunderabad", "SP Road, Secunderabad", "Secunderabad"},
+                            {"Rainbow Kharkhana", "Kharkhana", "Secunderabad"}})
+                    .map(strings -> new HCProvider(strings[0],strings[1],strings[2]))
+                    .collect(Collectors.toList());
+            hcProviderRepository.saveAll(hcProviderData);
+        }
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Vaccines$
+ * HCProvider$
  *
  * Copyright (c) 2021  Pegasystems Inc.
  * All rights reserved.
@@ -15,7 +15,10 @@
  */
 package com.pega.hcms.model;
 
+
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -26,14 +29,23 @@ import javax.persistence.Table;
 
 /**
  * @author vagrant
- * @version Vaccines$ 11/25/21
+ * @version HCProvider$ 11/26/21
  */
 @Entity
 @Table(
-        name="vaccines"
+        name="hcprovider"
 )
-public class Vaccines {
-    public Vaccines() {
+public class HCProvider {
+
+    public HCProvider() {
+    }
+
+    @JsonCreator
+    public HCProvider(@JsonProperty("userid") String hcprovidername, @JsonProperty("address") String address,
+                      @JsonProperty("city") String city) {
+        this.hcprovidername = hcprovidername;
+        this.address = address;
+        this.city = city;
     }
 
     @Id
@@ -42,9 +54,14 @@ public class Vaccines {
     @JsonIgnore
     private Long id;
 
-    private String vaccinename;
+    @Column(name = "hcprovidername")
+    private String hcprovidername;
 
-    private String disease;
+    @Column(name = "address")
+    private String address;
+
+    @Column(name = "city")
+    private String city;
 
     public Long getId() {
         return id;
@@ -54,24 +71,27 @@ public class Vaccines {
         this.id = id;
     }
 
-    public String getVaccinename() {
-        return vaccinename;
+    public String getHcprovidername() {
+        return hcprovidername;
     }
 
-    public void setVaccinename(String vaccinename) {
-        this.vaccinename = vaccinename;
+    public void setHcprovidername(String hcprovidername) {
+        this.hcprovidername = hcprovidername;
     }
 
-    public String getDisease() {
-        return disease;
+    public String getAddress() {
+        return address;
     }
 
-    public void setDisease(String disease) {
-        this.disease = disease;
+    public void setAddress(String address) {
+        this.address = address;
     }
 
-    public Vaccines( String vaccinename, String disease) {
-        this.vaccinename = vaccinename;
-        this.disease = disease;
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
     }
 }

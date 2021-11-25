@@ -1,5 +1,5 @@
 /*
- * VaccinationHistory$
+ * VaccinationDrive$
  *
  * Copyright (c) 2021  Pegasystems Inc.
  * All rights reserved.
@@ -15,6 +15,7 @@
  */
 package com.pega.hcms.model;
 
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -29,17 +30,29 @@ import java.util.Date;
 
 /**
  * @author vagrant
- * @version VaccinationHistory$ 11/25/21
+ * @version VaccinationDrive$ 11/25/21
  */
 @Entity
 @Table(
-        name="vaccinationhistory"
+        name="vaccinationdrive"
 )
-public class VaccinationHistory {
+public class VaccinationDrive {
 
-    public VaccinationHistory() {
+    @JsonCreator
+    public VaccinationDrive(@JsonProperty("userid") Long userid,
+                            @JsonProperty("vaccinename") String vaccinename,
+                            @JsonProperty("startdate")Date startdate,
+                            @JsonProperty("enddate")Date enddate,
+                            @JsonProperty("hcprovidername") String hcprovidername) {
+        this.userid = userid;
+        this.vaccinename = vaccinename;
+        this.startdate = startdate;
+        this.enddate = enddate;
+        this.hcprovidername = hcprovidername;
     }
 
+    public VaccinationDrive() {
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -52,8 +65,14 @@ public class VaccinationHistory {
     @Column(name = "vaccinename")
     private String vaccinename;
 
-    @Column(name = "dateofadministration")
-    private Date dateofadministration;
+    @Column(name = "startdate")
+    private Date startdate;
+
+    @Column(name = "enddate")
+    private Date enddate;
+
+    @Column(name = "hcprovidername")
+    private String hcprovidername;
 
     public Long getId() {
         return id;
@@ -79,19 +98,27 @@ public class VaccinationHistory {
         this.vaccinename = vaccinename;
     }
 
-    public Date getDateofadministration() {
-        return dateofadministration;
+    public Date getStartdate() {
+        return startdate;
     }
 
-    public void setDateofadministration(Date dateofadministration) {
-        this.dateofadministration = dateofadministration;
+    public void setStartdate(Date startdate) {
+        this.startdate = startdate;
     }
 
-    @JsonCreator
-    public VaccinationHistory(@JsonProperty("userid") Long userid, @JsonProperty("vaccinename") String vaccinename,
-                              @JsonProperty("dateofadministration") Date dateofadministration) {
-        this.userid = userid;
-        this.vaccinename = vaccinename;
-        this.dateofadministration = dateofadministration;
+    public Date getEnddate() {
+        return enddate;
+    }
+
+    public void setEnddate(Date enddate) {
+        this.enddate = enddate;
+    }
+
+    public String getHcprovidername() {
+        return hcprovidername;
+    }
+
+    public void setHcprovidername(String hcprovidername) {
+        this.hcprovidername = hcprovidername;
     }
 }
