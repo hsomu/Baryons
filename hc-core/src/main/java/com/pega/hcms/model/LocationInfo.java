@@ -16,6 +16,8 @@
 package com.pega.hcms.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.micronaut.validation.Validated;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.Objects;
 
@@ -23,6 +25,8 @@ import java.util.Objects;
  * @author vagrant
  * @version LocationInfo$ 11/25/21
  */
+@Schema(description = "The Location Info")
+@Validated
 public class LocationInfo {
     public static final String COPYRIGHT = "Copyright (c) 2021  Pegasystems Inc.";
 

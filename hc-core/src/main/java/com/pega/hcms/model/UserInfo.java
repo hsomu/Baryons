@@ -10,7 +10,7 @@ import java.util.Objects;
  * @author vagrant
  * @version Operator$ 5/6/21
  */
-@Schema(description = "The Citizen Info")
+@Schema(description = "The User Info")
 @Validated
 public class UserInfo {
     public static final String COPYRIGHT = "Copyright (c) 2021  Pegasystems Inc.";

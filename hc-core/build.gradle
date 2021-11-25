@@ -40,7 +40,7 @@ dependencies {
 
 test.classpath += configurations.developmentOnly
 
-mainClassName = "example.Application"
+mainClassName = "com.pega.hcms.Application"
 // use JUnit 5 platform
 test {
     useJUnitPlatform()
