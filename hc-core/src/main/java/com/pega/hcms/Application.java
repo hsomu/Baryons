@@ -15,17 +15,28 @@
  */
 package com.pega.hcms;
 
+import com.pega.hcms.model.Vaccines;
+import com.pega.hcms.repository.VaccinesRepository;
 import io.micronaut.runtime.Micronaut;
 
 /**
  * @author Graeme Rocher
  * @since 1.0
  */
+import io.micronaut.runtime.event.annotation.EventListener;
+import io.micronaut.runtime.server.event.ServerStartupEvent;
+import io.micronaut.scheduling.annotation.Async;
 import io.swagger.v3.oas.annotations.*;
 import io.swagger.v3.oas.annotations.info.*;
 import io.swagger.v3.oas.annotations.tags.*;
 import io.swagger.v3.oas.annotations.servers.*;
 import io.swagger.v3.oas.annotations.security.*;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 /**
  * @author graemerocher
  * @since 1.0
@@ -58,9 +69,27 @@ import io.swagger.v3.oas.annotations.security.*;
                         })
         }
 )
+@Singleton
 public class Application {
+
+    @Inject
+    private VaccinesRepository vaccinesRepository;
 
     public static void main(String[] args) {
         Micronaut.run(Application.class);
+    }
+
+
+    @EventListener
+    @Async
+    public void onStartup(ServerStartupEvent event) {
+        vaccinesRepository.deleteAll();
+        var vaccinesList = Map.of("BCG", "Tuberculosis", "Hep B", "Hepatitis B",
+                        "Polio", "Poliovirus", "Covishield","Covid-19", "Covaxin","Covid-19" )
+                .entrySet()
+                .stream()
+                .map( e -> new Vaccines(e.getKey(), e.getValue()))
+                        .collect(Collectors.toList());
+        vaccinesRepository.saveAll(vaccinesList);
     }
 }

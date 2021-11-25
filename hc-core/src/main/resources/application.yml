@@ -1,0 +1,70 @@
+micronaut:
+  application:
+    name: HCMS
+  server:
+    # DataDog pod inside K8s will reach application on pods IP to grab statistic,
+    #  therefore it must be available on all IP pods addresses (on 0.0.0.0)
+    host: 0.0.0.0
+    port: ${MICRONAUT_PORT:8080}
+  router:
+    static-resources:
+      swagger:
+        enabled: true
+        paths: classpath:static/swagger
+        mapping: /swagger/**
+      swagger-ui:
+        enabled: true
+        paths: classpath:static/swagger/views/swagger-ui
+        mapping: /swagger-ui/**
+  security:
+    intercept-url-map:
+      - pattern: /swagger/spec.yaml
+        http-method: GET
+        access:
+          - isAnonymous()
+      - pattern: /swagger-ui
+        http-method: GET
+        access:
+          - isAnonymous()
+  metrics:
+    enabled: true # Enable metrics
+    export:
+      prometheus: # Metrics will be exported in prometheus format
+        enabled: true
+        step: PT1M # report metrics for every 1Min.
+        descriptions: true # sends meter description to prometheus
+
+endpoints:
+  all:
+    port: ${MANAGEMENT_PORT:8082} # Start management endpoints on separate port, so they would not be available from the internet.
+  metrics:
+    enabled: false # Disable metrics endpoint as its not used.
+  prometheus:
+    enabled: true # Enable prometheus endpoint for gathering application metrics
+    sensitive: false
+  health:
+    enabled: true
+    sensitive: false
+  loggers:
+    enabled: true
+    sensitive: false
+    write-sensitive: false # required to be able to update logger level by unauthorized user
+
+datasources:
+  default:
+    url: ${JDBC_URL:`jdbc:h2:mem:default;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE`}
+    username: ${JDBC_USER:sa}
+    password: ${JDBC_PASSWORD:""}
+    driverClassName: ${JDBC_DRIVER:org.h2.Driver}
+    schema-generate: CREATE_DROP
+    dialect: H2
+
+jpa:
+  default:
+    entity-scan:
+      packages: 'com.pega.hcms.model'
+
+flyway:
+  datasources:
+    default:
+      enabled: true
