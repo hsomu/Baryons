@@ -16,10 +16,14 @@
 package com.pega.hcms.controllers;
 
 import com.pega.hcms.model.AccessRole;
+import com.pega.hcms.model.HCProvider;
 import com.pega.hcms.model.LocationInfo;
 import com.pega.hcms.model.UserInfo;
+import com.pega.hcms.model.VaccinationDrive;
 import com.pega.hcms.model.VaccinationHistory;
+import com.pega.hcms.repository.HCProviderRepository;
 import com.pega.hcms.repository.UserInfoRepository;
+import com.pega.hcms.repository.VaccinationDriveRepository;
 import com.pega.hcms.repository.VaccinationHistoryRepository;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Body;
@@ -60,6 +64,12 @@ public class HealthCareController {
     @Inject
     private VaccinationHistoryRepository vaccinationHistoryRepository;
 
+    @Inject
+    private VaccinationDriveRepository vaccinationDriveRepository;
+
+    @Inject
+    private HCProviderRepository hcProviderRepository;
+
     @Get(uri = "/citizen", produces = MediaType.TEXT_PLAIN)
     public Single<String> citizen() {
         return Single.just("Citizen info!");
@@ -89,17 +99,29 @@ public class HealthCareController {
 
     @Get(uri = "/findUserByAadhar/{aadhar}", produces = MediaType.APPLICATION_JSON)
     public Optional<UserInfo> findUserByAadhar(String aadhar) {
-        return Optional.ofNullable(userInfoRepository.findByAadhar(aadhar));
+        try{
+            return Optional.ofNullable(userInfoRepository.findByAadhar(aadhar));
+        }catch(Exception e){
+            return Optional.empty();
+        }
     }
 
     @Get(uri = "/findUserByEmail/{email}", produces = MediaType.APPLICATION_JSON)
     public Optional<UserInfo> findUserByEmail(String email) {
-        return Optional.ofNullable(userInfoRepository.findByEmail(email));
+        try{
+            return Optional.ofNullable(userInfoRepository.findByEmail(email));
+        }catch(Exception e){
+            return Optional.empty();
+        }
     }
 
     @Get(uri = "/findUserByMobile/{mobileNumber}", produces = MediaType.APPLICATION_JSON)
     public Optional<UserInfo> findUserByMobile(String mobileNumber) {
-        return Optional.ofNullable(userInfoRepository.findByMobileNumber(mobileNumber));
+        try{
+            return Optional.ofNullable(userInfoRepository.findByMobileNumber(mobileNumber));
+        }catch(Exception e){
+            return Optional.empty();
+        }
     }
 
     @Operation(summary = "Creates VaccinationHistory",
@@ -124,7 +146,7 @@ public class HealthCareController {
             )
     )
     @Put(value = "addVaccinationHistory")
-    public String addVaccinationHistory(@Parameter(description = "Pulse message data to be sent") @Valid @Body VaccinationHistory vaccinationHistory) {
+    public String addVaccinationHistory(@Parameter(description = "vaccinationHistory data to be sent") @Valid @Body VaccinationHistory vaccinationHistory) {
         vaccinationHistoryRepository.save(vaccinationHistory);
         return "Success";
     }
@@ -134,4 +156,84 @@ public class HealthCareController {
         return StreamSupport.stream(vaccinationHistoryRepository.findAll().spliterator(), false)
                 .collect(Collectors.toList());
     }
+
+    @Operation(summary = "Creates VaccinationDrive",
+            operationId = "addVaccinationDrive",
+            description = "Creates VaccinationDrive",
+            tags = {"cpsapi"},
+            requestBody = @RequestBody(
+                    description = "Pulse message data to be sent",
+                    required = true,
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = VaccinationDrive.class)
+                            )
+                    }
+            )
+    )
+    @ApiResponse(responseCode = "200", description = "successful operation",
+            content = @Content(
+                    mediaType = "application/text",
+                    schema = @Schema(implementation = String.class)
+            )
+    )
+    @Put(value = "addVaccinationDrive")
+    public String addVaccinationDrive(@Parameter(description = "VaccinationDrive data to be sent") @Valid @Body VaccinationDrive vaccinationDrive) {
+
+        if(findHCProvider(vaccinationDrive.getHcprovidername()).isEmpty()){
+            return "Unknown healthCare provider: " + vaccinationDrive.getHcprovidername();
+        }
+        vaccinationDriveRepository.save(vaccinationDrive);
+        return "Success";
+    }
+
+    @Get(uri = "/getVaccinationDrive", produces = MediaType.APPLICATION_JSON)
+    public List<VaccinationDrive> getVaccinationDrive() {
+        return StreamSupport.stream(vaccinationDriveRepository.findAll().spliterator(), false)
+                .collect(Collectors.toList());
+    }
+
+    @Operation(summary = "Creates HCProvider",
+            operationId = "addHCProvider",
+            description = "Creates HCProvider",
+            tags = {"cpsapi"},
+            requestBody = @RequestBody(
+                    description = "HCProvider data to be sent",
+                    required = true,
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = HCProvider.class)
+                            )
+                    }
+            )
+    )
+    @ApiResponse(responseCode = "200", description = "successful operation",
+            content = @Content(
+                    mediaType = "application/text",
+                    schema = @Schema(implementation = String.class)
+            )
+    )
+    @Put(value = "addHCProvider")
+    public String addHCProvider(@Parameter(description = "HCProvider data to be sent") @Valid @Body HCProvider hcProvider) {
+        hcProviderRepository.save(hcProvider);
+        return "Success";
+    }
+
+    @Get(uri = "/getHCProvider", produces = MediaType.APPLICATION_JSON)
+    public List<HCProvider> getHCProvider() {
+        return StreamSupport.stream(hcProviderRepository.findAll().spliterator(), false)
+                .collect(Collectors.toList());
+    }
+
+    @Get(uri = "/findHCProvider/{hcProviderName}", produces = MediaType.APPLICATION_JSON)
+    public Optional<HCProvider> findHCProvider(String hcProviderName) {
+        try{
+            return Optional.ofNullable(hcProviderRepository.findByHcprovidername(hcProviderName));
+        }catch(Exception e){
+            return Optional.empty();
+        }
+    }
+
 }

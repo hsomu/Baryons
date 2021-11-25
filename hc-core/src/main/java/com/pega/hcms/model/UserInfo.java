@@ -1,5 +1,7 @@
 package com.pega.hcms.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -35,6 +37,7 @@ public class UserInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
+    @JsonIgnore
     private Long userid;
 
     @Column(name = "name")
