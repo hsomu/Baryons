@@ -17,7 +17,6 @@ package com.pega.hcms.controllers;
 
 import com.pega.hcms.model.AccessRole;
 import com.pega.hcms.model.HCProvider;
-import com.pega.hcms.model.LocationInfo;
 import com.pega.hcms.model.UserInfo;
 import com.pega.hcms.model.VaccinationDrive;
 import com.pega.hcms.model.VaccinationHistory;
@@ -31,7 +30,6 @@ import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Put;
 import io.micronaut.validation.Validated;
-import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -42,10 +40,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -129,7 +125,7 @@ public class HealthCareController {
             description = "Creates VaccinationHistory",
             tags = {"cpsapi"},
             requestBody = @RequestBody(
-                    description = "Pulse message data to be sent",
+                    description = "Vaccination data to be sent",
                     required = true,
                     content = {
                             @Content(
@@ -162,7 +158,7 @@ public class HealthCareController {
             description = "Creates VaccinationDrive",
             tags = {"cpsapi"},
             requestBody = @RequestBody(
-                    description = "Pulse message data to be sent",
+                    description = "Vaccination drive data to be sent",
                     required = true,
                     content = {
                             @Content(
